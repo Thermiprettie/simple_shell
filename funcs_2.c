@@ -1,47 +1,71 @@
 #include "main.h"
-
 /**
- * prompt - call functions (prompt)
+ * _getenv - gets PATH member from environ
+ * @name: pointer to PATH string
  *
- **/
-void prompt(void)
+ * Return: pointer to PATH member string or NULL if not found
+ */
+char *_getenv(const char *name)
 {
-	for (;;)
-	{
-		char *text = NULL, **environ;
-		pid_t child_pid;
-		int status, lenbuf;
-		size_t bufsize = 0;
+	int i, result;
 
-		place("$ ");
-		lenbuf = getline(&text, &bufsize, stdin);
-		if (lenbuf == -1)
-			exit(98);
-		if (compareExit(text, "exit") == 0)
-			exit(0);
-		if (compareEnv(text, "env") == 0)
+	for (i = 0; environ[i]; i++)
+	{
+		result = _PATHstrcmp(name, environ[i]);
+		if (result == 0)
 		{
-			while (*environ != NULL)
-			{
-				if (!(_strcmpdir(*environ, "USER")) ||
-						!(_strcmpdir(*environ, "LANGUAGE")) ||
-						!(_strcmpdir(*environ, "SESSION")) ||
-						!(_strcmpdir(*environ, "COMPIZ_CONFIG_PROFILE")) ||
-						!(_strcmpdir(*environ, "SHLV")) ||
-						!(_strcmpdir(*environ, "HOME")) ||
-						!(_strcmpdir(*environ, "C_IS")) ||
-						!(_strcmpdir(*environ, "DESKTOP_SESSION")) ||
-						!(_strcmpdir(*environ, "LOGNAME")) ||
-						!(_strcmpdir(*environ, "TERM")) ||
-						!(_strcmpdir(*environ, "PATH")))
-				{
-					place(*environ), place("\n"); }
-				environ++; }}
-		child_pid = fork();
-		if (child_pid < 0)
-			perror("Error");
-		if (child_pid == 0)
-			identify_string(text);
-		else
-			wait(&status);
-	}}
+			return (environ[i]);
+		}
+	}
+	return (NULL);
+}
+/**
+ * _env - prints the environ
+ *
+ * Return: 0 on success
+ */
+int _env(void)
+{
+	int i;
+
+	for (i = 0; environ[i]; i++)
+		_puts(environ[i]);
+	return (0);
+}
+/**
+ * _puts - prints a string
+ * @str: string to print
+ */
+void _puts(char *str)
+{
+	int c;
+
+	for (c = 0; str[c] != '\0'; c++)
+		_putchar(str[c]);
+	_putchar('\n');
+}
+/**
+ * _putchar - prints a character
+ * @c: character to print
+ *
+ * Return: return value of write syscall
+ */
+int _putchar(char c)
+{
+	return (write(1, &c, 1));
+}
+/**
+ * _memset - fills memory with a constant byte
+ * @s: character array to fill
+ * @b: constant byte to fill with
+ * @n: how many bytes to fill
+ * Return: the pointer to the char array
+ */
+char *_memset(char *s, char b, unsigned int n)
+{
+	unsigned int i;
+
+	for (i = 0; i < n; i++)
+		s[i] = b;
+	return (s);
+}

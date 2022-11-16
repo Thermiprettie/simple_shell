@@ -1,49 +1,92 @@
 #include "main.h"
-
 /**
- * execute_proc - similar to puts in C
- * @cmd: a pointer the integer we want to set to 402
+ * tokenize - creates array of tokens based on user string
+ * @buffer: pointer to user string
  *
- * Return: int
+ * Return: pointer to array of user strings
  */
-void execute_proc(char **cmd)
+char **tokenize(char *buffer)
 {
+	char *token = NULL;
+	int i = 0, wordcount = 0;
+	char *delimiter = " \n";
+	char **av = NULL;
 
-	char *parametro = (*(cmd + 1));
-	char *s, *slash = "/";
-	char *o;
-
-	char *vartoprint = *cmd;
-	char *argv[4];
-
-	if ((access(cmd[0], F_OK) == 0))
+	wordcount = _splitstring(buffer);
+	if (!wordcount)
+		return (NULL);
+	av = malloc((wordcount + 1) * sizeof(char *));
+	if (av == NULL)
+		exit(1);
+	token = strtok(buffer, delimiter);
+	while (token != NULL)
 	{
-		argv[0] = cmd[0];
-		argv[1] = parametro;
-		argv[2] = ".";
-		argv[3] = NULL;
+		av[i] = _strdup(token);
+		token = strtok(NULL, delimiter);
+		i++;
+	}
+	av[i] = NULL;
+	return (av);
+}
+/**
+ * _splitPATH - counts the number of PATH members
+ * @str: pointer to string to count
+ *
+ * Return: number of PATH members
+ */
+int _splitPATH(char *str)
+{
+	int i, searchflag = 1, wordcount = 0;
 
-		if (execve(argv[0], argv, NULL) == -1)
+	for (i = 0; str[i]; i++)
+	{
+		if (str[i] != ':' && searchflag == 1)
 		{
-			perror("Error");
+			wordcount += 1;
+			searchflag = 0;
+		}
+		if (str[i + 1] == ':')
+		{
+			searchflag = 1;
 		}
 	}
-	else
+	return (wordcount);
+}
+/**
+ * _PATHstrcmp - compares PATH with environ to find PATH value
+ * @s1: pointer PATH string
+ * @s2: pointer to environ string with actual value
+ *
+ * Return: 0 on success
+ */
+int _PATHstrcmp(const char *s1, const char *s2)
+{
+	int i;
+
+	for (i = 0; s2[i] != '='; i++)
 	{
-		o = find_command(vartoprint);
-
-		slash = str_concat(o, slash);
-
-		s = str_concat(slash, *cmd);
-
-		argv[0] = s;
-		argv[1] = parametro;
-		argv[2] = ".";
-		argv[3] = NULL;
-
-		if (execve(argv[0], argv, NULL) == -1)
-		{
-			perror("Error");
-		}
+		if (s1[i] != s2[i])
+			return (-1);
 	}
+	return (0);
+}
+/**
+ * _concat - concats user string with PATH member string and /
+ * @tmp: static array to store concatenated string
+ * @av: pointer to array of user strings
+ * @tok: pointer to PATH token
+ *
+ * Return: 0 on success
+ */
+char *_concat(char *tmp, char **av, char *tok)
+{
+	int len = 0;
+
+	_memset(tmp, 0, 256);
+	len = _strlen(tok) + _strlen(av[0]) + 2;
+	_strcat(tmp, tok);
+	_strcat(tmp, "/");
+	_strcat(tmp, av[0]);
+	tmp[len - 1] = '\0';
+	return (tmp);
 }

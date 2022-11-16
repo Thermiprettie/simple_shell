@@ -1,18 +1,40 @@
 #include "main.h"
-
 /**
- * main - function to call all fun
- * @ac: ac
- * @av: av
- * Return: 0
+ * main - runs the shell program
+ *
+ * Return: 0 on success
  */
-
-int main(int ac, char **av)
+int main(void)
 {
-	(void)av;
-	(void)ac;
+	char *fullpathbuffer = NULL, *copy = NULL, *buffer = NULL;
+	char *PATH = NULL;
+	char **av = NULL;
+	int exitstatus = 0;
 
-	signal(SIGINT, controlC);
-	prompt();
+	signal(SIGINT, SIG_IGN);
+	PATH = _getenv("PATH");
+	if (PATH == NULL)
+		return (-1);
+	while (1)
+	{
+		av = NULL;
+		prompt();
+		buffer = _read();
+		if (*buffer != '\0')
+		{
+			av = tokenize(buffer);
+			if (av == NULL)
+			{
+				free(buffer);
+				continue;
+			}
+			fullpathbuffer = _fullpathbuffer(av, PATH, copy);
+			if (checkbuiltins(av, buffer, exitstatus) != 0)
+				continue;
+			exitstatus = _forkprocess(av, buffer, fullpathbuffer);
+		}
+		else
+			free(buffer);
+	}
 	return (0);
 }
