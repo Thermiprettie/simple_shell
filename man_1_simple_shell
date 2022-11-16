@@ -1,56 +1,91 @@
-.TH HSH 1
-.SH NAME
-hsh \- Holberton Shell	
-.SH SYNOPSIS
-.B hsh
-[command] [options ...]
-.SH COPYRIGHT
-hsh \- is a holberton school first trimester project
-.SH DESCRIPTION
-.B hsh
-is a shell command interpreter that executes command read from the standard input or from file.
-.B hsh
-is intend to be a clone of the standard command interpreter of 
-.B Unix
-and 
-.B Unix-like
-system.
-.SH OPTIONS
-A  simple command is a sequence of optional variable assignments followed by blank-separated words and redirections, 
-and terminated by a control operator.  The first word specifies the command to be
-executed, and is passed as argument zero.  The remaining words are passed as arguments to the invoked command.
-.PP
-The return value of a simple command is its exit status, or 128+n if the command is terminated by signal n.
-.SS
-Piplines
-A pipeline is a sequence of one or more commands separated by one of the control operators | or |&.  The format for a pipeline is:
-.PP
-[command [..ARGS]] [| - |&] [command2 [..ARGS]]
-.PP
-The standard output of command is connected via a pipe to the standard input of command2.  This connection is performed before any redirections specified by the command (see REDIRECTION below).   If
-|&  is  used,  command's standard error, in addition to its standard output, is connected to command2's standard input through the pipe; it is shorthand for 2>&1 |.  This implicit redirection of the
-standard error to the standard output is performed after any redirections specified by the command.
-.SS Lists
+.TH Ghost 1 "20 April 2017" "version 1.0" "Programmer's Manual"
 
-A list is a sequence of one or more pipelines separated by one of the operators ;, &, &&, or ||, and optionally terminated by one of ;, &, or <newline>.
-Of these list operators, && and || have equal precedence, followed by ; and &, which have equal precedence.
-A sequence of one or more newlines may appear in a list instead of a semicolon to delimit commands.
+
+
+.SH NAME
+.B Ghost Shell (hsh)
+- command interpreter (shell)
+
+
+.SH SYNOPSIS
 .PP
-If  a command is terminated by the control operator &, the shell executes the command in the background in a subshell.  The shell does not wait for the command to finish, and the return status is 0.
-Commands separated by a ; are executed sequentially; the shell waits for each command to terminate in turn.  The return status is the exit status of the last command executed.
-AND and OR lists are sequences of one or more pipelines separated by the && and || control operators, respectively.  AND and OR lists are executed with left associativity.  An AND list has the form
+.B ./hsh
+
+
+
 .PP
-command1 && command2
+.B 
+.SH DESCRIPTION
+The ghost shell is a command that reads lines from either a file or the termi- \
+nal, interprets them, and generally executes other commands. It is the \ 
+program that is running when a user logs into the system. The shell implements a language \ 
+that has flow control contructs, a macro facility that provides a variety of features in addition to data \storage, along withe built in history and line editing capabilities. It also has features to \
+aid interactive use and has the advantage that the interpretative language is common to both interactive\ and non-interactive use (shell scripts). Commands can be typed directly to the running shell or can be put\ into a file and the file can be executed directly by the shell.
 .PP
-command2 is executed if, and only if, command1 returns an exit status of zero.
+.SH EXAMPLE:
+$PATH:
 .PP
-An OR list has the form:
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:
+
+
+
 .PP
-command1 || command2
+Ghost shell has two builtinin commands it also integrates with other commands \
+that can be located in the PATH. The output of ghost shell is to replicate \
+exactly as the shell 'sh' or 'bash'.
 .PP
-command2 is executed if and only if command1 returns a non-zero exit status.  The return status of AND and OR lists is the exit status of the last command executed in the list.
+.B $ man bash
+. Ghost Shell\
+The ghost shell takes commands from files, shell scripts and user input in both interactive or non-interactive mode.
+
+.SH INITIALIZATION
+To use the ghost shell the user needs to compile \
+using: gcc. The run the output file by calling it whether \
+by the output name it was given. 
+.PP
+.B EX: $ ./some_name or $ a./a.out.\
+.PP
+.SH The ghost shell will compile with the following:
+gcc -Wall -Wextra -Werror -pedantic *.c -o hsh
+
+
+.PP
+If the user inputs piplines or calls  non-interactive mode the ghost shell should\
+funciton and execute said commands. An example of non-interactive mode input:
+.PP
+.B $ echo 'ls -a' | ./hsh
+.PP
+.PP
+.RE 
+.SH Another example of non interactive mode:
+.PP
+.B $ cat some_file | ./hsh
+.PP
+
+
+.SH OPTIONS
+The ghost shell does not take any options but does utilize \
+extern char **environ. 
+
+ 
+
+
+
+.B
+.PP
+.SH BUILT-INS
+.PP
+.B There are two builtins in the shell.\
+
+.PP
+env - tells the program to display all of the environment variables with thier values. \
+Also a way to access the values through the shell.
+.PP
+exit - To exit out of the shell user can utilize exit. Exits program with status 0.\
+
+.SH SEE ALSO
+.I Nothing else
+.SH BUGS
+No Known Bugs
 .SH AUTHORS
-Sebri Issam \- Holberton School Software Engineer Student
-.SH VERSIONS
-.B hsh
-V1.0.0
+.B Carrie Ybay and Wendy Segura
