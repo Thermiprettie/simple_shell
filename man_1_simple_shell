@@ -1,127 +1,85 @@
-.\" Manpage for SSH
-
-.TH SSH 1 "15 April 2020" "1.0" "SSH man page"
-
+.\" Man page for hsh
+.TH HSH 1 "28 August 2019" "Holberton" "Holberton Shell Man Page"
 .SH NAME
-    ssh - interface to the Unix system kernel
-
+.B hsh
+\- a simple command interpreter
 .SH SYNOPSIS
-    $ [command] [-flags ]
-
+.B hsh
+.RI [ FILENAME ]
 .SH DESCRIPTION
-     SSH provides you with an interface to the system kernel.
-     It gathers input from the user and  executes  programs  based on
-     that input. When a program  finishes executing, it displays
-     that command's output followed by a new prompt.
-
-.SH PROMPT
-     SSH provides the user a command prompt where the user can 
-     type commands and execute them by pressing newline, ssh 
-     takes the user input and compares it with a couple of builtins
-     if they are equal ssh proceeds to execute these functions otherwise
-     ssh begins to split the line entered by the user into words separated
-     by spaces and then looks for the adequate path for it in the file system
-     if it matches any executable its passed to the system call execve.
-
-
-.SH OPTIONS
-
-Built-ins
-
-     env
-     Prints the current environment
-
-     exit [x]
-     Causes the shell to exit with the exit status  specified by
-     x. If x is omitted then the exit status is that of the last
-     command executed. 
-
-     history
-     Print the history contained in a file named .simple_shell_history
-     and also the commands ran by the current user.
-
-Examples of Commands
-
-     pwd
-     Prints the name of the current directory. man pwd for more info
-
-     ls
-     Lists the files in the current working directory. man ls for more
-     info.
-
-     echo
-     Displays a string to standard output. man echo for more info.
-
-     sh
-     A shell program written by Ken Thompson. man sh for more info.
-
+hsh executes commands read from standard input or from a file. Lines are read
+one at a time. Each line is first split into tokens and dequoted. The first
+word is then checked for aliases. If an alias is found, it is expanded. The
+first word of the resulting command is checked to see if it is a builtin. If
+it is, then hsh executes the builtin before reading the next line of input.
+If it is not a builtin, a path search is performed. If the command is not
+found, the status is set to 127. If the command is found but not executable,
+the status is set to 126. Otherwise, hsh forks and executes the given command
+before reading the next line of input.
+mimic the behavior of other POSIX-compliant shells (e.g. dash)
+.SS BUILTINS
+.TP
+.B alias
+.RI [ NAME [=' VALUE ']
+.R ...]
+Print and define command aliases.
+.TP
+.B cd
+.RI [ DIRECTORY ]
+Change the current working directory.
+.TP
+.B env
+Print the environment.
+.TP
+.B exit
+.RI [ STATUS ]
+.Exit the shell.
+.TP
+.B help
+.R [
+.I BUILTIN
+.R ...]
+Show a help message.
+.TP
+.B setenv
+.I VARIABLE VALUE
+Set an environment variable.
+.TP
+.B unsetenv
+.I VARIABLE
+.R ...
+Unset an environment variable.
+.SH EXIT STATUS
+If the exit builtin is called with a status,
+.B hsh
+.R exits with the specified value. Otherwise,
+.B hsh
+.R exits with the exit status of the previous command.
+.SH ENVIRONMENT
+.TP
+PATH
+The default search path for executables
+.TP
+HOME
+The default argument for the cd builtin
+.TP
+PWD
+Set by the cd builtin upon changing directories
+.TP
+OLDPWD
+Set by the cd builtin and used as it's argument it receives ``-''
+.SH EXAMPLES
+.PP
+hsh
+.PP
+echo ls | hsh
 .SH SEE ALSO
-    sh(1),  csh(1),  environ(7),  execve(2), exit(3), getline(3),
-    kill(2), malloc(3), perror(3), signal(2), strtok(3), wait(2),
-    _exit(2), isatty(3).
-
-.SH EXAMPLE CODE
-
-From Main Function:
-
-
-
-#include "holberton.h"
-
-int main(int ac, char **av, char **env)
-{
-int bytesRead, i, x = 0;
-size_t buffsize;
-char *buffer = NULL, **tokens, **commands;
-h_t *head = NULL;
-(void)ac;
-
-    signal(SIGINT, siggy);
-    while (1)
-    {
-    if (isatty(STDIN_FILENO))
-    _puts("$ ");
-
-    bytesRead = getline(&buffer, &buffsize, stdin);
-    if (bytesRead == -1)
-        break;
-
-    x = berautix() - 1;
-    make_history(buffer, &head, x);
-
-    buffer[bytesRead - 1] = '\0';
-    if (*buffer == '\0')
-    continue;
-
-    if (isbuiltin(buffer, env, &head) == 3 ||
-    isbuiltin(buffer, env, &head) == 1)
-    continue;
-
-    if (isbuiltin(buffer, env, &head) == 2)
-    {
-    free(buffer);
-    exit(1);
-    }
-
-    commands = make_command(buffer, ";");
-
-    for (i = 0 ; commands[i] ; i++)
-    {
-    tokens = make_command(commands[i], " ");
-    exec_command(av, tokens, buffer, env, commands);
-    if (tokens)
-    free(tokens);
-    }
-
-    free(commands);
-    }
-free(buffer);
-return (0);
-}
-
-
+.BR sh(1) , bash(1) , csh(1) , dash(1)
 .SH BUGS
-     Not discovered yet
-
+No known bugs.
+Report bugs to ...
 .SH AUTHORS
-     Written by Yacine Kedidi and Jacer Dabbebi
+.PP
+Banu Sapakova (banuaksom@gmail.com)
+.PP
+Patrick DeYoreo (pdeyoreo@gmail.com)
