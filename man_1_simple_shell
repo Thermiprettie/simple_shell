@@ -1,27 +1,127 @@
-.TH hsh 1 "August 2019" "1.0" "hsh - Simple Shell General Commands Manual"
+.\" Manpage for SSH
+
+.TH SSH 1 "15 April 2020" "1.0" "SSH man page"
+
 .SH NAME
-hsh - Simple Shell
+    ssh - interface to the Unix system kernel
+
 .SH SYNOPSIS
-.B hsh
-.I [OPTIONS] [FILE]
-.B Interactive mode
-.I [command_name][option_name][argument ...]
+    $ [command] [-flags ]
+
 .SH DESCRIPTION
-The simple shell is a program that takes commands from the keyboard and gives them to the operating system to perform. It incorporates many features and generally executes other commands. An interactive shell generally prompts before each command, inspects arguments, execute them and handles possible errors. The simple shell reads input in terms of lines from a file and breaks it up into words at whitespaces. 
-.SH EXAMPLES
-$ ./hsh
- simple@shell $ /bin/ls
- README.md exec.c holberton.h main.c prompt.c
- simple@shell $
- simple@shell $ exit
- $
-.PP
- $ echo "/bin/ls" | ./hsh
- README.md exec.c holberton.h main.c prompt.c
- $
+     SSH provides you with an interface to the system kernel.
+     It gathers input from the user and  executes  programs  based on
+     that input. When a program  finishes executing, it displays
+     that command's output followed by a new prompt.
+
+.SH PROMPT
+     SSH provides the user a command prompt where the user can 
+     type commands and execute them by pressing newline, ssh 
+     takes the user input and compares it with a couple of builtins
+     if they are equal ssh proceeds to execute these functions otherwise
+     ssh begins to split the line entered by the user into words separated
+     by spaces and then looks for the adequate path for it in the file system
+     if it matches any executable its passed to the system call execve.
+
+
+.SH OPTIONS
+
+Built-ins
+
+     env
+     Prints the current environment
+
+     exit [x]
+     Causes the shell to exit with the exit status  specified by
+     x. If x is omitted then the exit status is that of the last
+     command executed. 
+
+     history
+     Print the history contained in a file named .simple_shell_history
+     and also the commands ran by the current user.
+
+Examples of Commands
+
+     pwd
+     Prints the name of the current directory. man pwd for more info
+
+     ls
+     Lists the files in the current working directory. man ls for more
+     info.
+
+     echo
+     Displays a string to standard output. man echo for more info.
+
+     sh
+     A shell program written by Ken Thompson. man sh for more info.
+
 .SH SEE ALSO
-sh(1)
+    sh(1),  csh(1),  environ(7),  execve(2), exit(3), getline(3),
+    kill(2), malloc(3), perror(3), signal(2), strtok(3), wait(2),
+    _exit(2), isatty(3).
+
+.SH EXAMPLE CODE
+
+From Main Function:
+
+
+
+#include "holberton.h"
+
+int main(int ac, char **av, char **env)
+{
+int bytesRead, i, x = 0;
+size_t buffsize;
+char *buffer = NULL, **tokens, **commands;
+h_t *head = NULL;
+(void)ac;
+
+    signal(SIGINT, siggy);
+    while (1)
+    {
+    if (isatty(STDIN_FILENO))
+    _puts("$ ");
+
+    bytesRead = getline(&buffer, &buffsize, stdin);
+    if (bytesRead == -1)
+        break;
+
+    x = berautix() - 1;
+    make_history(buffer, &head, x);
+
+    buffer[bytesRead - 1] = '\0';
+    if (*buffer == '\0')
+    continue;
+
+    if (isbuiltin(buffer, env, &head) == 3 ||
+    isbuiltin(buffer, env, &head) == 1)
+    continue;
+
+    if (isbuiltin(buffer, env, &head) == 2)
+    {
+    free(buffer);
+    exit(1);
+    }
+
+    commands = make_command(buffer, ";");
+
+    for (i = 0 ; commands[i] ; i++)
+    {
+    tokens = make_command(commands[i], " ");
+    exec_command(av, tokens, buffer, env, commands);
+    if (tokens)
+    free(tokens);
+    }
+
+    free(commands);
+    }
+free(buffer);
+return (0);
+}
+
+
 .SH BUGS
-Keep in mind this is still a Work in progress and does not have fully functionality of a shell
+     Not discovered yet
+
 .SH AUTHORS
-Written by Geraldinne Bohórquez & Diego Monroy
+     Written by Yacine Kedidi and Jacer Dabbebi
