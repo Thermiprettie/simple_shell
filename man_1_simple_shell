@@ -1,85 +1,56 @@
-.\" Man page for hsh
-.TH HSH 1 "28 August 2019" "Holberton" "Holberton Shell Man Page"
+.TH HSH 1
 .SH NAME
-.B hsh
-\- a simple command interpreter
+hsh \- Holberton Shell	
 .SH SYNOPSIS
 .B hsh
-.RI [ FILENAME ]
+[command] [options ...]
+.SH COPYRIGHT
+hsh \- is a holberton school first trimester project
 .SH DESCRIPTION
-hsh executes commands read from standard input or from a file. Lines are read
-one at a time. Each line is first split into tokens and dequoted. The first
-word is then checked for aliases. If an alias is found, it is expanded. The
-first word of the resulting command is checked to see if it is a builtin. If
-it is, then hsh executes the builtin before reading the next line of input.
-If it is not a builtin, a path search is performed. If the command is not
-found, the status is set to 127. If the command is found but not executable,
-the status is set to 126. Otherwise, hsh forks and executes the given command
-before reading the next line of input.
-mimic the behavior of other POSIX-compliant shells (e.g. dash)
-.SS BUILTINS
-.TP
-.B alias
-.RI [ NAME [=' VALUE ']
-.R ...]
-Print and define command aliases.
-.TP
-.B cd
-.RI [ DIRECTORY ]
-Change the current working directory.
-.TP
-.B env
-Print the environment.
-.TP
-.B exit
-.RI [ STATUS ]
-.Exit the shell.
-.TP
-.B help
-.R [
-.I BUILTIN
-.R ...]
-Show a help message.
-.TP
-.B setenv
-.I VARIABLE VALUE
-Set an environment variable.
-.TP
-.B unsetenv
-.I VARIABLE
-.R ...
-Unset an environment variable.
-.SH EXIT STATUS
-If the exit builtin is called with a status,
 .B hsh
-.R exits with the specified value. Otherwise,
+is a shell command interpreter that executes command read from the standard input or from file.
 .B hsh
-.R exits with the exit status of the previous command.
-.SH ENVIRONMENT
-.TP
-PATH
-The default search path for executables
-.TP
-HOME
-The default argument for the cd builtin
-.TP
-PWD
-Set by the cd builtin upon changing directories
-.TP
-OLDPWD
-Set by the cd builtin and used as it's argument it receives ``-''
-.SH EXAMPLES
+is intend to be a clone of the standard command interpreter of 
+.B Unix
+and 
+.B Unix-like
+system.
+.SH OPTIONS
+A  simple command is a sequence of optional variable assignments followed by blank-separated words and redirections, 
+and terminated by a control operator.  The first word specifies the command to be
+executed, and is passed as argument zero.  The remaining words are passed as arguments to the invoked command.
 .PP
-hsh
+The return value of a simple command is its exit status, or 128+n if the command is terminated by signal n.
+.SS
+Piplines
+A pipeline is a sequence of one or more commands separated by one of the control operators | or |&.  The format for a pipeline is:
 .PP
-echo ls | hsh
-.SH SEE ALSO
-.BR sh(1) , bash(1) , csh(1) , dash(1)
-.SH BUGS
-No known bugs.
-Report bugs to ...
+[command [..ARGS]] [| - |&] [command2 [..ARGS]]
+.PP
+The standard output of command is connected via a pipe to the standard input of command2.  This connection is performed before any redirections specified by the command (see REDIRECTION below).   If
+|&  is  used,  command's standard error, in addition to its standard output, is connected to command2's standard input through the pipe; it is shorthand for 2>&1 |.  This implicit redirection of the
+standard error to the standard output is performed after any redirections specified by the command.
+.SS Lists
+
+A list is a sequence of one or more pipelines separated by one of the operators ;, &, &&, or ||, and optionally terminated by one of ;, &, or <newline>.
+Of these list operators, && and || have equal precedence, followed by ; and &, which have equal precedence.
+A sequence of one or more newlines may appear in a list instead of a semicolon to delimit commands.
+.PP
+If  a command is terminated by the control operator &, the shell executes the command in the background in a subshell.  The shell does not wait for the command to finish, and the return status is 0.
+Commands separated by a ; are executed sequentially; the shell waits for each command to terminate in turn.  The return status is the exit status of the last command executed.
+AND and OR lists are sequences of one or more pipelines separated by the && and || control operators, respectively.  AND and OR lists are executed with left associativity.  An AND list has the form
+.PP
+command1 && command2
+.PP
+command2 is executed if, and only if, command1 returns an exit status of zero.
+.PP
+An OR list has the form:
+.PP
+command1 || command2
+.PP
+command2 is executed if and only if command1 returns a non-zero exit status.  The return status of AND and OR lists is the exit status of the last command executed in the list.
 .SH AUTHORS
-.PP
-Banu Sapakova (banuaksom@gmail.com)
-.PP
-Patrick DeYoreo (pdeyoreo@gmail.com)
+Sebri Issam \- Holberton School Software Engineer Student
+.SH VERSIONS
+.B hsh
+V1.0.0
